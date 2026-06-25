@@ -3,102 +3,129 @@
 namespace App\Http\Controllers;
 
 use App\Models\DemandeConfirmee;
-use App\Models\DemandeEssai;
+use App\Models\Produit;
 use App\Models\Laboratoire;
+use App\Models\DemandeEssai;
 use Illuminate\Http\Request;
 
 class DemandeConfirmeeController extends Controller
 {
-    /**
-     * Afficher la liste des demandes confirmées
-     */
     public function index()
     {
-        $demandesConfirmees = DemandeConfirmee::with(['laboratoire', 'demandeEssai.essai'])->paginate(10);
+        $demandesConfirmees = DemandeConfirmee::with(['laboratoire', 'produit'])->paginate(10);
         return view('demandes_confirmees.index', compact('demandesConfirmees'));
     }
 
-    /**
-     * Afficher le formulaire de création
-     */
-    public function create()
-    {
-        $demandesEssaiCloturees = DemandeEssai::with(['demande', 'essai', 'laboratoire'])
-            ->where('cloture', true)
-            ->orderBy('created_at', 'desc')
-            ->get();
-        $laboratoires = Laboratoire::where('is_active', true)->orderBy('nom')->get();
-        return view('demandes_confirmees.create', compact('demandesEssaiCloturees', 'laboratoires'));
+public function selectProduit(Request $request)
+{
+    $query = Produit::where('statut', 'done')->with('laboratoire');
+
+    // Si un ID est fourni en recherche
+    if ($request->filled('produit_id')) {
+        $query->where('id', $request->produit_id);
     }
 
-    /**
-     * Enregistrer une nouvelle demande confirmée
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'demande_essai_id' => ['required', 'exists:demande_essai,id'],
-            'client' => ['required', 'string', 'max:255'],
-            'date_reception' => ['required', 'date'],
-            'numero_bc' => ['required', 'string', 'max:255'],
-            'date_reception_bc' => ['required', 'date'],
-            'laboratoire_id' => ['required', 'exists:laboratoires,id'],
-            'confirmation' => ['required', 'in:oui,non'],
-            'code_rapport' => ['required', 'string', 'max:255'],
-        ]);
+    $produits = $query->orderBy('created_at', 'desc')->get();
 
-        DemandeConfirmee::create($validated);
+    return view('demandes_confirmees.select_produit', compact('produits'));
+}
 
-        return redirect()->route('demandes_confirmees.index')->with('success', 'Demande confirmée créée avec succès.');
+
+public function create(Request $request)
+{
+    $produit = null;
+    if ($request->has('produit_id')) {
+        $produit = Produit::with('laboratoire')->findOrFail($request->produit_id);
     }
 
-    /**
-     * Afficher une demande confirmée
-     */
+    return view('demandes_confirmees.create', compact('produit'));
+}
+
+
+
+ public function store(Request $request)
+{
+    $validated = $request->validate([
+        'produit_id'        => ['required', 'exists:produits,id'],
+        'numero_bc'         => ['required', 'string', 'max:255'],
+        'date_reception_bc' => ['required', 'date'],
+        'date_reception_échantillons' => ['required', 'date'],
+        'confirmation'      => ['required', 'in:oui,non'],
+        'code_rapport'      => ['required', 'string', 'max:255'],
+    ]);
+
+    // Charger le produit choisi
+    $produit = Produit::findOrFail($validated['produit_id']);
+
+    // Créer la demande confirmée en copiant les infos du produit
+    DemandeConfirmee::create([
+        'produit_id'        => $produit->id,
+        'client'            => $produit->client_name,   // ✅ utiliser client_name
+         'laboratoire_id'    => $produit->lab_id, // ✅ utiliser laboratoire_id 
+        'date_reception_échantillons' => $validated['date_reception_échantillons'],
+        'numero_bc'         => $validated['numero_bc'],
+        'date_reception_bc' => $validated['date_reception_bc'],
+        'confirmation'      => $validated['confirmation'],
+        'code_rapport'      => $validated['code_rapport'],
+    ]);
+
+    return redirect()->route('demandes_confirmees.index')
+                     ->with('success', 'Demande confirmée créée avec succès.');
+}
+
+
     public function show(DemandeConfirmee $demandesConfirmee)
     {
-        $demandesConfirmee->load(['laboratoire', 'demandeEssai.essai', 'demandeEssai.demande']);
+        $demandesConfirmee->load(['laboratoire', 'produit', 'demandeEssai.essai', 'demandeEssai.demande']);
         return view('demandes_confirmees.show', compact('demandesConfirmee'));
     }
 
-    /**
-     * Afficher le formulaire d'édition
-     */
-    public function edit(DemandeConfirmee $demandesConfirmee)
-    {
-        $demandesConfirmee->load(['laboratoire', 'demandeEssai']);
-        $demandesEssaiCloturees = DemandeEssai::with(['demande', 'essai', 'laboratoire'])
-            ->where('cloture', true)
-            ->orderBy('created_at', 'desc')
-            ->get();
-        $laboratoires = Laboratoire::where('is_active', true)->orderBy('nom')->get();
-        return view('demandes_confirmees.edit', compact('demandesConfirmee', 'demandesEssaiCloturees', 'laboratoires'));
-    }
+   public function edit(DemandeConfirmee $demandesConfirmee)
+{
+    $demandesConfirmee->load(['laboratoire', 'produit']);
 
-    /**
-     * Mettre à jour une demande confirmée
-     */
-    public function update(Request $request, DemandeConfirmee $demandesConfirmee)
-    {
-        $validated = $request->validate([
-            'demande_essai_id' => ['required', 'exists:demande_essai,id'],
-            'client' => ['required', 'string', 'max:255'],
-            'date_reception' => ['required', 'date'],
-            'numero_bc' => ['required', 'string', 'max:255'],
-            'date_reception_bc' => ['required', 'date'],
-            'laboratoire_id' => ['required', 'exists:laboratoires,id'],
-            'confirmation' => ['required', 'in:oui,non'],
-            'code_rapport' => ['required', 'string', 'max:255'],
-        ]);
+    // Produits avec statut = done
+    $demandesEssaiCloturees = Produit::where('statut', 'done')
+        ->with(['laboratoire'])
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        $demandesConfirmee->update($validated);
+    return view('demandes_confirmees.edit', compact('demandesConfirmee', 'demandesEssaiCloturees'));
+}
 
-        return redirect()->route('demandes_confirmees.index')->with('success', 'Demande confirmée mise à jour avec succès.');
-    }
 
-    /**
-     * Supprimer une demande confirmée
-     */
+ public function update(Request $request, DemandeConfirmee $demandesConfirmee)
+{
+    $validated = $request->validate([
+        'produit_id'                  => ['required', 'exists:produits,id'],
+        'numero_bc'                   => ['required', 'string', 'max:255'],
+        'date_reception_bc'           => ['required', 'date'],
+        'date_reception_échantillons' => ['required', 'date'],
+        'confirmation'                => ['required', 'in:oui,non'],
+        'code_rapport'                => ['required', 'string', 'max:255'],
+    ]);
+
+    $produit = Produit::findOrFail($validated['produit_id']);
+
+    $demandesConfirmee->update([
+        'produit_id'                  => $produit->id,
+        'client'                      => $produit->client_name,
+        'date_reception'              => $produit->date_reception,
+        'laboratoire_id'              => $produit->lab_id, // ✅ récupéré du produit
+        'numero_bc'                   => $validated['numero_bc'],
+        'date_reception_bc'           => $validated['date_reception_bc'],
+        'date_reception_échantillons' => $validated['date_reception_échantillons'],
+        'confirmation'                => $validated['confirmation'],
+        'code_rapport'                => $validated['code_rapport'],
+    ]);
+
+    return redirect()->route('demandes_confirmees.index')
+                     ->with('success', 'Demande confirmée mise à jour avec succès.');
+}
+
+
+
+
     public function destroy(DemandeConfirmee $demandesConfirmee)
     {
         $demandesConfirmee->delete();

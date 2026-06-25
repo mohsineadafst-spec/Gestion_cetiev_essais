@@ -11,7 +11,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Middleware global
+        $middleware->append(\App\Http\Middleware\LogActionMiddleware::class);
+
+        // Ou middleware par groupe
+        // $middleware->web([\App\Http\Middleware\LogActionMiddleware::class]);
+        // $middleware->api([\App\Http\Middleware\LogActionMiddleware::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

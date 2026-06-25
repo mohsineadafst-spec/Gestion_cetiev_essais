@@ -20,16 +20,21 @@
                             <label for="demande_id" class="block text-sm font-medium text-gray-700 mb-2">
                                 Sélectionner une demande (Produit) *
                             </label>
+                            
                             <select id="demande_id" name="demande_id"
-                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('demande_id') border-red-500 @enderror"
-                                    required>
-                                <option value="">-- Choisir une demande --</option>
-                                @foreach ($produits as $produit)
-                                    <option value="{{ $produit->id }}" {{ old('demande_id') == $produit->id ? 'selected' : '' }}>
-                                        #{{ $produit->id }} - {{ $produit->client_name }} ({{ $produit->laboratoire->nom ?? 'N/A' }})
-                                    </option>
-                                @endforeach
-                            </select>
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
+               focus:outline-none focus:ring-blue-500 focus:border-blue-500 
+               @error('demande_id') border-red-500 @enderror"
+        required>
+    <option value="">-- Choisir une demande --</option>
+    @foreach ($produits as $produit)
+        <option value="{{ $produit->id }}" 
+            {{ (old('demande_id', $demandeIdPreselectionne ?? null) == $produit->id) ? 'selected' : '' }}>
+            #{{ $produit->id }} - {{ $produit->client_name }} ({{ $produit->laboratoire->nom ?? 'N/A' }})
+        </option>
+    @endforeach
+</select>
+
                             @error('demande_id')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -64,55 +69,39 @@
                             <select id="essai_id" name="essai_id"
                                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('essai_id') border-red-500 @enderror">
                                 <option value="">-- Choisir un essai --</option>
-                                @foreach ($essais as $essai)
-                                    <option value="{{ $essai->id }}" {{ old('essai_id') == $essai->id ? 'selected' : '' }}>
-                                        {{ $essai->nom_essai }}
-                                    </option>
-                                @endforeach
+                               @foreach($essais as $essai)
+    <option value="{{ $essai->id }}">{{ $essai->nom_essai }}</option>
+@endforeach
+
                             </select>
                             @error('essai_id')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Section: Nouvel Essai -->
-                        <div x-show="essaiOption === 'nouveau'" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg transition">
-                            <h3 class="text-sm font-medium text-gray-700 mb-4">Créer un nouvel essai</h3>
-                            
-                            <!-- Nom du nouvel essai -->
-                            <div class="mb-4">
-                                <label for="nouveau_essai_nom" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Nom de l'essai *
-                                </label>
-                                <input type="text" id="nouveau_essai_nom" name="nouveau_essai_nom" 
-                                       value="{{ old('nouveau_essai_nom') }}"
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('nouveau_essai_nom') border-red-500 @enderror"
-                                       x-bind:required="essaiOption === 'nouveau'">
-                                @error('nouveau_essai_nom')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+                       <!-- Section: Nouvel Essai -->
+<div x-show="essaiOption === 'nouveau'" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg transition">
+    <h3 class="text-sm font-medium text-gray-700 mb-4">Créer un nouvel essai</h3>
+    
+    <!-- Nom du nouvel essai -->
+    <div class="mb-4">
+        <label for="nouveau_essai_nom" class="block text-sm font-medium text-gray-700 mb-2">
+            Nom de l'essai *
+        </label>
+        <input type="text" id="nouveau_essai_nom" name="nouveau_essai_nom" 
+               value="{{ old('nouveau_essai_nom') }}"
+               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
+                      focus:outline-none focus:ring-blue-500 focus:border-blue-500 
+                      @error('nouveau_essai_nom') border-red-500 @enderror"
+               x-bind:required="essaiOption === 'nouveau'">
+        @error('nouveau_essai_nom')
+            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        @enderror
+    </div>
 
-                            <!-- Laboratoire pour le nouvel essai -->
-                            <div class="mb-4">
-                                <label for="nouveau_essai_laboratoire" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Laboratoire associé *
-                                </label>
-                                <select id="nouveau_essai_laboratoire" name="nouveau_essai_laboratoire"
-                                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('nouveau_essai_laboratoire') border-red-500 @enderror"
-                                        x-bind:required="essaiOption === 'nouveau'">
-                                    <option value="">-- Choisir un laboratoire --</option>
-                                    @foreach ($laboratoires as $labo)
-                                        <option value="{{ $labo->id }}" {{ old('nouveau_essai_laboratoire') == $labo->id ? 'selected' : '' }}>
-                                            {{ $labo->nom }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('nouveau_essai_laboratoire')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
+    <!-- ⚠️ Laboratoire supprimé : il sera automatiquement pris depuis auth()->user()->laboratoire_id -->
+</div>
+
 
                         <!-- Laboratoire (Pôle) -->
                         <div class="mb-6">

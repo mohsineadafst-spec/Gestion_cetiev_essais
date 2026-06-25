@@ -83,4 +83,8 @@ class DemandeEssai extends Model
     {
         return $this->demande?->client_name;
     }
+       public function produit()
+    {
+        return $this->belongsTo(Produit::class, 'demande_id');
+    }
 }

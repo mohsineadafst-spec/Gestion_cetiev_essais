@@ -6,30 +6,31 @@ use Illuminate\Database\Eloquent\Model;
 
 class DemandeConfirmee extends Model
 {
-    protected $table = 'demandes_confirmees';
+    protected $table = 'demandes_confirme';
 
     protected $fillable = [
-        'demande_essai_id',
+        'produit_id',
         'client',
-        'date_reception',
+        'laboratoire_id',
+        'date_reception_échantillons',
         'numero_bc',
         'date_reception_bc',
-        'laboratoire_id',
         'confirmation',
         'code_rapport',
+        'demande_essai_id',
     ];
 
     protected $casts = [
-        'date_reception' => 'date',
+        'date_reception_échantillons' => 'date',
         'date_reception_bc' => 'date',
     ];
 
     /**
-     * Relation : la demande d'essai associée
+     * Relation : le produit associé
      */
-    public function demandeEssai()
+    public function produit()
     {
-        return $this->belongsTo(DemandeEssai::class, 'demande_essai_id');
+        return $this->belongsTo(Produit::class, 'produit_id');
     }
 
     /**
@@ -37,6 +38,15 @@ class DemandeConfirmee extends Model
      */
     public function laboratoire()
     {
-        return $this->belongsTo(Laboratoire::class);
+        return $this->belongsTo(Laboratoire::class, 'laboratoire_id');
     }
+
+    /**
+     * Relation : la demande_essai associée (optionnelle)
+     */
+   public function demandesEssais()
+    {
+        return $this->hasMany(DemandeEssai::class, 'demande_id', 'produit_id');
+    }
+
 }

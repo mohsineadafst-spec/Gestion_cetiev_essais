@@ -98,4 +98,8 @@ class Produit extends Model
             }
         }
     }
+     public function demandesConfirmees()
+    {
+        return $this->hasMany(DemandeConfirmee::class, 'produit_id');
+    }
 }

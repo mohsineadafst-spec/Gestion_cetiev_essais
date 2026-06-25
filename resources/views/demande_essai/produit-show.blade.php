@@ -456,68 +456,76 @@
                                     {{-- ── Actions ── --}}
                                     <div class="flex flex-col items-stretch gap-2 shrink-0 w-40">
 
-                                        @if($demande->demande->type === 'développement' && Auth::check() && Auth::user()->manageLaboratoire($demande->laboratoire_id))
-                                            <a href="{{ route('etudes.show', $demande) }}"
-                                               class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
-                                                      text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200
-                                                      hover:bg-emerald-100 active:scale-95 transition-all duration-150">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7 12a5 5 0 1110 0 5 5 0 01-10 0z"/>
-                                                </svg>
-                                                Accéder à l'étude
-                                            </a>
-                                        @endif
+    {{-- Accéder à l’étude : toujours visible si conditions respectées --}}
+    @if($demande->demande->type === 'développement' 
+        && Auth::check() 
+        && Auth::user()->manageLaboratoire($demande->laboratoire_id))
+        <a href="{{ route('etudes.show', $demande) }}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
+                  text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200
+                  hover:bg-emerald-100 active:scale-95 transition-all duration-150">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7 12a5 5 0 1110 0 5 5 0 01-10 0z"/>
+            </svg>
+            Accéder à l'étude
+        </a>
+    @endif
 
-                                        <a href="{{ route('demande_essai.edit', $demande->id) }}"
-                                           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
-                                                  text-blue-700 bg-blue-50 ring-1 ring-blue-200
-                                                  hover:bg-blue-100 active:scale-95 transition-all duration-150">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                            </svg>
-                                            Modifier
-                                        </a>
+    {{-- Actions sensibles : affichées uniquement si user responsable --}}
+    @if(Auth::check() && Auth::user()->manageLaboratoire($demande->laboratoire_id))
+        <a href="{{ route('demande_essai.edit', $demande->id) }}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
+                  text-blue-700 bg-blue-50 ring-1 ring-blue-200
+                  hover:bg-blue-100 active:scale-95 transition-all duration-150">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            Modifier
+        </a>
 
-                                        @if($demande->cloture)
-                                            <div class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
-                                                    text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
-                                                </svg>
-                                                Clôturé
-                                            </div>
-                                        @elseif(Auth::check() && Auth::user()->manageLaboratoire($demande->laboratoire_id))
-                                            <form method="POST" action="{{ route('demande_essai.cloture', $demande->id) }}">
-                                                @csrf
-                                                <button type="submit"
-                                                        onclick="return confirm('Êtes-vous sûr de vouloir clôturer cet essai?')"
-                                                        class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
-                                                               text-orange-700 bg-orange-50 ring-1 ring-orange-200
-                                                               hover:bg-orange-100 active:scale-95 transition-all duration-150">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                    </svg>
-                                                    Clôturer
-                                                </button>
-                                            </form>
-                                        @endif
+        @if($demande->cloture)
+            <div class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
+                    text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                </svg>
+                Clôturé
+            </div>
+        @else
+            <form method="POST" action="{{ route('demande_essai.cloture', $demande->id) }}">
+                @csrf
+                <button type="submit"
+                        onclick="return confirm('Êtes-vous sûr de vouloir clôturer cet essai?')"
+                        class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
+                               text-orange-700 bg-orange-50 ring-1 ring-orange-200
+                               hover:bg-orange-100 active:scale-95 transition-all duration-150">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Clôturer
+                </button>
+            </form>
+        @endif
 
-                                        <form method="POST" action="{{ route('demande_essai.destroy', $demande->id) }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette assignation?')"
-                                                    class="w-full inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
-                                                           text-rose-700 bg-rose-50 ring-1 ring-rose-200
-                                                           hover:bg-rose-100 active:scale-95 transition-all duration-150">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                </svg>
-                                                Supprimer
-                                            </button>
-                                        </form>
+        <form method="POST" action="{{ route('demande_essai.destroy', $demande->id) }}">
+            @csrf
+            @method('DELETE')
+            <button type="submit"
+                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette assignation?')"
+                    class="w-full inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
+                           text-rose-700 bg-rose-50 ring-1 ring-rose-200
+                           hover:bg-rose-100 active:scale-95 transition-all duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                Supprimer
+            </button>
+        </form>
+    @endif
 
-                                    </div>
+</div>
+{{-- ── /Actions ── --}}
+
                                     {{-- ── /Actions ── --}}
 
                                 </div>

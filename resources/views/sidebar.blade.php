@@ -4,43 +4,7 @@
     :class="{ 'sidebar--collapsed': !open }">
 
     {{-- ─── Brand ─────────────────────────────── --}}
-    <div class="sidebar__brand">
-
-        <div class="sidebar__logo">
-           
-
-                <rect width="32" height="32" rx="8" fill="url(#grad)" />
-
-                <path d="M8 22L14 10L20 18L24 14"
-                    stroke="#fff"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-
-                <defs>
-                    <linearGradient id="grad" x1="0" y1="0" x2="32" y2="32">
-                        <stop offset="0%" stop-color="#4F6EF7" />
-                        <stop offset="100%" stop-color="#7C3AED" />
-                    </linearGradient>
-                </defs>
-            </svg>
-        </div>
-
-        <span class="sidebar__brand-name">RootPanel</span>
-
-        <button class="sidebar__toggle"
-            @click="open = !open"
-            title="Réduire la barre">
-
-            <svg viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2">
-
-                <path d="M15 18l-6-6 6-6" />
-            </svg>
-        </button>
-    </div>
+    
 
     {{-- ─── User ─────────────────────────────── --}}
     <div class="sidebar__user">
@@ -49,19 +13,33 @@
             {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
             <span class="sidebar__status"></span>
         </div>
+        
 
         <div class="sidebar__user-info">
             <strong>{{ Auth::user()->name ?? 'Utilisateur' }}</strong>
             <em>{{ Auth::user()->role ?? 'Utilisateur' }}</em>
         </div>
+         <button class="sidebar__toggle"
+            @click="open = !open"
+            title="Réduire la barre">
+
+            <svg viewBox="0 0 18 18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2">
+
+                <path d="M15 18l-6-6 6-6" />
+            </svg>
+        </button>
     </div>
+    
 
     {{-- ─── Navigation ─────────────────────────────── --}}
     <nav class="sidebar__nav">
         {{-- Dashboards --}}
         <div class="nav-group">
 
-            <button class="nav-item nav-item--parent"
+            <a href="{{ route('dashboard.index') }}" class="nav-item"
                 title="Tableau de bord">
 
                 <span class="nav-item__icon">
@@ -77,42 +55,84 @@
                 <span class="nav-item__label">
                     Tableaux de bord
                 </span>
-            </button>
-            
-            <button class="nav-item nav-item--child">
-                <span class="nav-item__dot"></span>
-                <span class="nav-item__label">
-                    <a href="{{ route('produits.index') }}" class="block w-full h-full">
-                     Demandes 
-                    </a>
-                </span>
-            </button>
-             <button class="nav-item nav-item--child">
-                <span class="nav-item__dot"></span>
-                <span class="nav-item__label">
-                    <a href="{{ route('demande_essai.index') }}" class="block w-full h-full">
-                    Assignations Essais
-                    </a>
-                </span>
-            </button>
-            <button class="nav-item nav-item--child">
-                <span class="nav-item__dot"></span>
-                <span class="nav-item__label">
-                    <a href="{{ route('demandes_confirmees.index') }}" class="block w-full h-full">
-                    Demandes Confirmées
-                    </a>
-                </span>
-            </button>
-            <button class="nav-item nav-item--child">
-                <span class="nav-item__dot"></span>
-                <span class="nav-item__label">
-                  Planification
-                </span>
-            </button>
+            </a>
 
-            
+            <a href="{{ route('produits.index') }}" class="nav-item">
+                <span class="nav-item__icon">
+                    <svg viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8">
+
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+                        <rect x="9" y="3" width="6" height="4" rx="1" />
+                        <path d="M9 12h6" />
+                        <path d="M9 16h6" />
+                    </svg>
+                </span>
+
+                <span class="nav-item__label">
+                    Demandes
+                </span>
+            </a>
+
+            <a href="{{ route('demande_essai.index') }}" class="nav-item">
+                <span class="nav-item__icon">
+                    <svg viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8">
+
+                        <path d="M9 3v11.5A3.5 3.5 0 0012.5 18v0A3.5 3.5 0 0016 14.5V3" />
+                        <line x1="6" y1="3" x2="18" y2="3" />
+                        <path d="M9 11h6" />
+                    </svg>
+                </span>
+
+                <span class="nav-item__label">
+                    Assignations Essais
+                </span>
+            </a>
+
+            <a href="{{ route('demandes_confirmees.index') }}" class="nav-item">
+                <span class="nav-item__icon">
+                    <svg viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8">
+
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                </span>
+
+                <span class="nav-item__label">
+                    Demandes Confirmées
+                </span>
+            </a>
+
+<a href="{{ route('planifier.index') }}" class="nav-item">
+                <span class="nav-item__icon">
+                    <svg viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8">
+
+                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                </span>
+
+                <span class="nav-item__label">
+                    Planification
+                </span>
+            </a>
+
+
         </div>
-        
+
 
         {{-- ── Administration ── --}}
         <div class="nav-section">
@@ -158,7 +178,7 @@
                 </span>
             </button>
 
-            
+
         </div>
 
         {{-- Laboratoires --}}
@@ -199,10 +219,10 @@
                 </span>
             </button>
 
-           
+
         </div>
 
-       
+
 
         {{-- ── Supervision ── --}}
         <div class="nav-section">
@@ -230,7 +250,9 @@
                 </span>
 
                 <span class="nav-item__label">
+                    <a href="{{ route('logs.index') }}" class="block w-full h-full">
                     Audit & Logs
+                    </a>
                 </span>
 
                 <span class="nav-item__chevron"
@@ -246,37 +268,7 @@
                 </span>
             </button>
 
-            <div class="nav-children"
-                x-show="expanded"
-                x-collapse>
 
-                <button class="nav-item nav-item--child">
-                    <span class="nav-item__dot"></span>
-                    <span class="nav-item__label">
-                        Audit trail
-                    </span>
-                </button>
-
-                <button class="nav-item nav-item--child">
-                    <span class="nav-item__dot"></span>
-                    <span class="nav-item__label">
-                        Actions récentes
-                    </span>
-                </button>
-
-                <button class="nav-item nav-item--child">
-                    <span class="nav-item__dot"></span>
-
-                    <span class="nav-item__label">
-                        Erreurs applicatives
-                    </span>
-
-                    <span class="nav-item__badge nav-item__badge--orange">
-                        New
-                    </span>
-                </button>
-
-            </div>
         </div>
 
     </nav>
@@ -467,6 +459,7 @@
     cursor:pointer;
     transition:.2s;
     text-align:left;
+    text-decoration:none;
 }
 
 .nav-item:hover{

@@ -7,13 +7,7 @@
                 </h2>
                 <p class="text-sm text-gray-500 mt-0.5">Gestion et suivi des demandes d'essai</p>
             </div>
-            <a href="{{ route('demande_essai.create') }}"
-               class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 active:scale-95 transition-all duration-150 shadow-md shadow-indigo-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                </svg>
-                Nouvelle assignation
-            </a>
+            
         </div>
     </x-slot>
 
@@ -56,6 +50,20 @@
             @if ($demandeEssais->count() > 0)
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/60">
+    
+
+    <!-- Barre de recherche -->
+    <form method="GET" action="{{ route('demande_essai.index') }}" class="flex items-center gap-2">
+        <input type="number" name="search" value="{{ request('search') }}"
+               placeholder="Rechercher par ID"
+               class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+        <button type="submit"
+                class="px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700 transition">
+            Rechercher
+        </button>
+    </form>
+</div>
 
                     {{-- Table toolbar --}}
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/60">
@@ -82,7 +90,7 @@
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="border-b border-gray-100">
-                                    <th class="px-6 py-3.5 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest w-24">#</th>
+                                    <th class="px-6 py-3.5 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest w-24">N° Demande</th>
                                     <th class="px-6 py-3.5 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest">Client</th>
                                     <th class="px-6 py-3.5 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest">Type</th>
                                     <th class="px-6 py-3.5 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest">Statut</th>
@@ -197,7 +205,7 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                                 </svg>
-                                                Voir
+                                                Accéder à la demande
                                             </a>
                                         </td>
 

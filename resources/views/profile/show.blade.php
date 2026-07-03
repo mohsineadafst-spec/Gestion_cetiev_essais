@@ -135,7 +135,7 @@
 
         <!-- Back Button -->
         <div class="mt-6">
-            <a href="{{ route('dashboard') }}"
+            <a href="{{ route('dashboard.index') }}"
                 class="text-indigo-600 hover:text-indigo-900 text-sm font-semibold">
                 ← Retour au tableau de bord
             </a>

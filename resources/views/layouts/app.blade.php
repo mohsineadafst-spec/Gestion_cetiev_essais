@@ -17,14 +17,14 @@
         @stack('styles')
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 flex">
+        <div class="min-h-screen bg-gray-100 flex flex-nowrap overflow-x-hidden">
                     @stack('styles')
 
             <!-- Sidebar -->
             @include('sidebar')
 
             <!-- Main Content -->
-            <div class="flex-1 flex flex-col">
+            <div class="flex-1 min-w-0 flex flex-col lg:pl-[var(--sidebar-w)]">
                 @include('layouts.navigation')
 
                 <!-- Page Heading -->

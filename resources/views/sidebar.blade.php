@@ -347,6 +347,9 @@
     display:flex;
     flex-direction:column;
     width:var(--sidebar-w);
+    min-width:var(--sidebar-w);
+    flex:0 0 var(--sidebar-w);
+    box-sizing:border-box;
     height:100vh;
     background:var(--sidebar-bg);
     border-right:1px solid var(--sidebar-border);
@@ -357,8 +360,19 @@
     font-family:var(--font);
 }
 
+@media (min-width: 1024px){
+    .sidebar{
+        position:fixed;
+        left:0;
+        top:0;
+        z-index:40;
+    }
+}
+
 .sidebar--collapsed{
     width:var(--sidebar-w-collapsed);
+    min-width:var(--sidebar-w-collapsed);
+    flex-basis:var(--sidebar-w-collapsed);
 }
 
 .sidebar__brand,

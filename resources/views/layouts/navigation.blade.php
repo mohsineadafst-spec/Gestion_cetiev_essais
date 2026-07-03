@@ -10,7 +10,7 @@
                 <!-- Logo -->
                 <a href="{{ route('dashboard.index') }}" class="flex items-center gap-3">
                     <div
-                        class="w-50 h-50 rounded-xl bg-gradient-to-r from-white-500 to-white-600 flex items-center justify-center shadow-md">
+                        class="w-12 h-12 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
                         <x-application-logo class="block h-6 w-auto fill-current text-white" />
                     </div>
 
